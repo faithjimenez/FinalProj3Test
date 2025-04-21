@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drag and Drop CD Player</title>
+  <link rel="stylesheet" href="mystyles.css">
+</head>
+<body>
+  <div class="parent">
+    <div class="div2">
+      <div id="tv-screen">
+    <iframe id="yt-iframe" width="560" height="315"
+      src="" frameborder="0"
+      allow="autoplay; encrypted-media"
+      allowfullscreen>
+    </iframe>
+  </div>
+  </div>
+  <div class="div1">
+      <div class="shape">
+        <div id="cd-player" class="cd-dropzone"></div>
+    </div>
+    
+  </div>
+  <div class="div3">
+  <div id="cds">
+    <!--CD1-->
+    <div class="cd" id="mix1" draggable="true" title="Mix 1">
+      <div class="outer"></div>
+      <div class="innermix1"></div>
+      </div>
+      <!--CD2-->
+      <div class="cd" id="mix2" draggable="true" title="Mix 2">
+        <div class="outer"></div>
+        <div class="innermix2"></div>
+        </div>
+      <!--CD3-->
+      <div class="cd" id="mix3" draggable="true" title="Mix 3">
+        <div class="outer"></div>
+        <div class="innermix3"></div>
+        </div>
+
+  </div>
+  </div>
+  </div>
+
+  <script>
+    //this part links the cds to the youtube videos - FIND LINKS!!!
+    const playlistMap = {
+      mix1: "https://www.youtube.com/embed/W41eBhJD32c?si=To4T2bEPUtDoP1XO?autoplay=1", 
+      mix2: "https://www.youtube.com/embed/lxaS78zmXI4?si=MlL4hzKFFM-KCbB1?autoplay=1",
+      mix3: "https://www.youtube.com/embed/ognkTf3uRz4?si=d5EsqLGcOzKLSvje?autoplay=1"
+    };
+
+    //defines the elements (?) idk if thats the right word, but it definitely defines something
+
+    const cds = document.querySelectorAll(".cd");
+    const player = document.getElementById("cd-player");
+    const iframe = document.getElementById("yt-iframe");
+
+    // Enables dragging-> for each cd, the image and "data" is dragged along- there is an offset to center the element to the cursor
+    cds.forEach(cd => {
+      cd.addEventListener("dragstart", (e) => {
+        e.dataTransfer.setData("text/plain", cd.id);
+        e.dataTransfer.setDragImage(cd, cd.offsetWidth / 2, cd.offsetHeight / 2);
+      });
+    });
+
+    // Enables dropping
+    player.addEventListener("dragover", (e) => {
+      e.preventDefault();
+    });
+
+    //this is what happens when you drop the cd, the playlist url (the YT video) starts playing, based on the cdID, then the i frame autoplays-- then, defined in the CSS code 
+    //the spin element, allows the cd to start spinning idk i hate everything
+    player.addEventListener("drop", (e) => {
+  e.preventDefault();
+  const cdId = e.dataTransfer.getData("text/plain");
+  const playlistURL = playlistMap[cdId];
+  iframe.src = playlistURL + "&autoplay=1";
+ const cd = document.getElementById(cdId); 
+
+ player.innerHTML = ''; 
+cd.classList.add("spin"); 
+player.appendChild(cd); 
+  player.querySelectorAll('.cd').forEach(cd => cd.remove());              
+  player.appendChild(cd);                   
+});
+const cdShelf = document.getElementById("cds");
+
+cdShelf.addEventListener("dragover", (e) => {
+  e.preventDefault(); 
+});
+
+cdShelf.addEventListener("drop", (e) => {
+  e.preventDefault();
+  const cdId = e.dataTransfer.getData("text/plain");
+  const cd = document.getElementById(cdId);
+  cd.classList.remove("spin"); 
+
+
+  cdShelf.appendChild(cd);      
+  iframe.src = "";               
+});
+
+  </script>
+
+</body>
+</html>
